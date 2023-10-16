@@ -1,5 +1,6 @@
 const express = require('express')
 const path = require('path')
+const csurf = require('csurf')
 const exphbs = require('express-handlebars')
 const mongoose = require("mongoose");
 const session =  require('express-session')
@@ -49,6 +50,7 @@ app.use(session({
     saveUninitialized: false,
     store
 }))
+app.use(csurf())
 app.use(varMiddleWare)
 app.use(userMiddleWare)
 

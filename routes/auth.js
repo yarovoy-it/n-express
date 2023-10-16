@@ -45,15 +45,16 @@ router.post('/login', async (req, res) => {
 
 router.post('/register', async (req, res) => {
     try {
-        const {email, password, repeat, name} = req.body
+        console.log(req.body)
+        const {email, password, confirm, name} = req.body
         const candidate = await User.findOne({email})
 
         if (candidate) {
             res.redirect('/auth/login#register')
         } else {
-            const hashPassword = await bcrypt.hash(password, 10)
+            const hashPassword = await bcrypt.hash(password, 4)
             const user = new User({
-                email, name, hashPassword, basket: {items: []}
+                email, name, password: hashPassword, basket: {items: []}
             })
             await user.save()
             res.redirect('/auth/login#login')

@@ -21,7 +21,7 @@ document.querySelectorAll('.price').forEach(node => {
     node.textContent = toCurrency(node.textContent)
 })
 
-document.querySelectorAll('.date').forEach(node =>{
+document.querySelectorAll('.date').forEach(node => {
     node.textContent = toDate(node.textContent)
 })
 
@@ -30,10 +30,14 @@ if ($basket) {
     $basket.addEventListener('click', event => {
         if (event.target.classList.contains('js-remove')) {
             const id = event.target.dataset.id
+            const csrf = event.target.dataset.csrf
 
 
             fetch("/basket/remove/" + id, {
-                method: 'delete'
+                method: 'delete',
+                headers: {
+                    'X-XSRF_TOKEN': csrf
+                }
             }).then(res => res.json())
                 .then(basket => {
                     if (basket.courses.length) {
