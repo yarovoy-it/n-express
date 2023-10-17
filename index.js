@@ -1,10 +1,11 @@
 const express = require('express')
 const path = require('path')
 const csurf = require('csurf')
+const flash = require('connect-flash')
 const exphbs = require('express-handlebars')
 const mongoose = require("mongoose");
-const session =  require('express-session')
-const MongoStore =  require('connect-mongodb-session')(session)
+const session = require('express-session')
+const MongoStore = require('connect-mongodb-session')(session)
 
 const homeRoutes = require('./routes/home')
 const addRoutes = require('./routes/add')
@@ -15,16 +16,14 @@ const authRoutes = require('./routes/auth')
 
 const varMiddleWare = require('./middleware/variables')
 const userMiddleWare = require('./middleware/user')
-
-const User = require("./models/user")
+const errorMiddleWare = require('./middleware/error')
+const {MONGODB_URI, SECRET} = require("./keys");
 
 const app = express()
 
-const MONGODB_URI = 'mongodb+srv://yury-1:5vB0xkaj47aevGHy@mydb.1vyjuoh.mongodb.net/shop'
-
 const store = new MongoStore({
-    uri:MONGODB_URI,
-    collection:'session'
+    uri: MONGODB_URI,
+    collection: 'session'
 })
 
 const hbs = exphbs.create({
@@ -33,7 +32,8 @@ const hbs = exphbs.create({
     runtimeOptions: {
         allowProtoPropertiesByDefault: true,
         allowProtoMethodsByDefault: true
-    }
+    },
+    helpers: require('./utils/hbs-healpers')
 })
 
 //register
@@ -45,12 +45,13 @@ app.set('views', 'views')
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({extended: true}))
 app.use(session({
-    secret: 'session',
+    secret: SECRET,
     resave: false,
     saveUninitialized: false,
     store
 }))
 app.use(csurf())
+app.use(flash())
 app.use(varMiddleWare)
 app.use(userMiddleWare)
 
@@ -60,6 +61,8 @@ app.use('/courses', courseRoutes)
 app.use('/basket', basketRoutes)
 app.use('/orders', ordersRoutes)
 app.use('/auth', authRoutes)
+
+app.use(errorMiddleWare)
 
 
 const PORT = process.env.PORT || 3000
