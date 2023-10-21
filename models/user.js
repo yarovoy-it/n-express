@@ -67,4 +67,4 @@ userSchema.methods.clearBasket = function () {
     return this.save()
 }
 
-module.exports = model('User', userSchema)
+module.exports = model('user', userSchema)
