@@ -28,4 +28,4 @@ const orderSchema = new Schema({
 })
 
 
-module.exports = model('order', orderSchema)
+module.exports = model('Order', orderSchema)

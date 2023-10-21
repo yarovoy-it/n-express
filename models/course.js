@@ -23,6 +23,6 @@ courseSchema.method('toClient', function (){
     return course
 })
 
-module.exports = model('course', courseSchema)
+module.exports = model('Course', courseSchema)
 
 
